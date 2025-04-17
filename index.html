@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Forecast</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      animation: gradientShift 10s ease infinite alternate;
+    }
+  
+    @keyframes gradientShift {
+      0% {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+      }
+      100% {
+        background: linear-gradient(135deg, #764ba2, #667eea);
+      }
+    }
+  
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 35px;
+      border-radius: 25px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 450px;
+      width: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+  
+    .container:hover {
+      transform: scale(1.02);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.4);
+    }
+  
+    h1 {
+      margin-bottom: 25px;
+      font-size: 30px;
+      color: #444;
+      text-shadow: 1px 1px 2px #ccc;
+    }
+  
+    input {
+      padding: 14px;
+      width: 85%;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      outline: none;
+      margin-bottom: 20px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+  
+    input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.4);
+    }
+  
+    button {
+      padding: 14px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #667eea;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+    }
+  
+    button:hover {
+      background: #5a67d8;
+      transform: scale(1.05);
+      box-shadow: 0 6px 18px rgba(102, 126, 234, 0.5);
+    }
+  
+    #result {
+      margin-top: 25px;
+      color: #333;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+  
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  
+    #result img {
+      width: 70px;
+      height: 70px;
+      margin-top: 10px;
+    }
+  
+    p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+  
+    h2 {
+      font-size: 22px;
+      margin-bottom: 10px;
+      color: #222;
+    }
+  
+    @media (max-width: 480px) {
+      .container {
+        padding: 25px 20px;
+      }
+  
+      input {
+        width: 100%;
+      }
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="container">
+    <h1>Weather Forecast</h1>
+    <input type="text" id="area" placeholder="Enter the area" />
+    <br />
+    <button id="button" onclick="fetchData()">Click here</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    let inputelement = document.getElementById("area");
+    let resultElement = document.getElementById("result");
+
+    function fetchData() {
+      let area = inputelement.value.trim();
+
+      if (!area) {
+        resultElement.innerHTML = "<p>Please enter an area.</p>";
+        return;
+      }
+
+      let apiKey = "3b1ea6e2b349447594b114913250904";
+      let url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${area}&aqi=no`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Weather data not found for the entered area.");
+          }
+          return response.json();
+        })
+        .then(data => {
+          let output = `
+            <h2>${data.location.name}, ${data.location.country}</h2>
+            <p><strong>Temperature:</strong> ${data.current.temp_c} °C</p>
+            <p><strong>Condition:</strong> ${data.current.condition.text}</p>
+            <img src="${data.current.condition.icon}" alt="weather icon" />
+            <p><strong>Wind:</strong> ${data.current.wind_kph} kph</p>
+            <p><strong>Humidity:</strong> ${data.current.humidity}%</p>
+          `;
+          resultElement.innerHTML = output;
+        })
+        .catch(error => {
+          resultElement.innerHTML = `<p style="color:red;">${error.message}</p>`;
+          console.error('Error fetching weather data:', error);
+        });
+    }
+  </script>
+</body>
+</html>
