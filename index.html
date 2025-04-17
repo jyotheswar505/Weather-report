@@ -150,7 +150,8 @@
       }
 
       let apiKey = "3b1ea6e2b349447594b114913250904";
-      let url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${area}&aqi=no`;
+      let url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${area}&aqi=no`;
+;
 
       fetch(url)
         .then(response => {
